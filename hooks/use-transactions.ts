@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 export function useTransactions() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchTransactions = async () => {
     try {
@@ -18,7 +18,11 @@ export function useTransactions() {
       setTransactions(data)
       setError(null)
     } catch (err) {
-      setError(err.message)
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError(String(err))
+      }
     } finally {
       setLoading(false)
     }

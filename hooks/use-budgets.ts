@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 export function useBudgets() {
   const [budgets, setBudgets] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchBudgets = async () => {
     try {
@@ -18,7 +18,11 @@ export function useBudgets() {
       setBudgets(data)
       setError(null)
     } catch (err) {
-      setError(err.message)
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError(String(err))
+      }
     } finally {
       setLoading(false)
     }
