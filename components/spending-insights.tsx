@@ -83,7 +83,7 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
       type: monthlyChange > 0 ? "warning" : "positive",
       icon: monthlyChange > 0 ? TrendingUp : TrendingDown,
       title: `${monthlyChange > 0 ? "Increased" : "Decreased"} spending`,
-      description: `You've spent ${Math.abs(monthlyChangePercent).toFixed(1)}% ${monthlyChange > 0 ? "more" : "less"} this month compared to last month ($${Math.abs(monthlyChange).toFixed(2)}).`,
+      description: `You&apos;ve spent ${Math.abs(monthlyChangePercent).toFixed(1)}% ${monthlyChange > 0 ? "more" : "less"} this month compared to last month ($${Math.abs(monthlyChange).toFixed(2)}).`,
     })
   }
 
@@ -184,7 +184,7 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
         <Card>
           <CardHeader>
             <CardTitle>Budget Status</CardTitle>
-            <CardDescription>How you're doing against your budgets</CardDescription>
+            <CardDescription>How you&apos;re doing against your budgets</CardDescription>
           </CardHeader>
           <CardContent>
             {budgetAnalysis.length === 0 ? (
