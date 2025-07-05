@@ -9,7 +9,9 @@ export async function GET() {
     const transactions = await db.collection("transactions").find({}).sort({ date: -1 }).toArray()
 
     return NextResponse.json(transactions)
-  } catch (error) {
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  catch {
     return NextResponse.json({ error: "Failed to fetch transactions" }, { status: 500 })
   }
 }
@@ -48,7 +50,9 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 },
     )
-  } catch (error) {
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  catch {
     return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 })
   }
 }

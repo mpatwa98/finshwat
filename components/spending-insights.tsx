@@ -102,7 +102,7 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
       type: "warning",
       icon: AlertTriangle,
       title: "Budget warning",
-      description: `You've used over 80% of your budget in: ${warningCategories.map((c) => c.category).join(", ")}.`,
+      description: `You&apos;ve used over 80% of your budget in: ${warningCategories.map((c) => c.category).join(", ")}.`,
     })
   }
 

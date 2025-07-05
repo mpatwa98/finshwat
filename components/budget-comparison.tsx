@@ -4,14 +4,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts"
 
+interface Transaction {
+  category: string
+  amount: number
+}
+
+interface Budget {
+  _id?: string
+  category: string
+  amount: number
+}
+
 interface BudgetComparisonProps {
-  transactions: any[]
-  budgets: any[]
+  transactions: Transaction[]
+  budgets: Budget[]
 }
 
 export function BudgetComparison({ transactions, budgets }: BudgetComparisonProps) {
   // Group transactions by category
-  const spendingByCategory = transactions.reduce((acc, transaction) => {
+  const spendingByCategory = transactions.reduce((acc: Record<string, number>, transaction: Transaction) => {
     if (!acc[transaction.category]) {
       acc[transaction.category] = 0
     }
@@ -20,7 +31,7 @@ export function BudgetComparison({ transactions, budgets }: BudgetComparisonProp
   }, {})
 
   // Create comparison data
-  const comparisonData = budgets.map((budget) => ({
+  const comparisonData = budgets.map((budget: Budget) => ({
     category: budget.category,
     budgeted: budget.amount,
     spent: spendingByCategory[budget.category] || 0,
@@ -76,7 +87,7 @@ export function BudgetComparison({ transactions, budgets }: BudgetComparisonProp
               <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
               <ChartTooltip
                 content={<ChartTooltipContent />}
-                formatter={(value, name) => [`$${value.toFixed(2)}`, name === "budgeted" ? "Budgeted" : "Spent"]}
+                formatter={(value: number | string, name: string) => [`$${Number(value).toFixed(2)}`, name === "budgeted" ? "Budgeted" : "Spent"]}
               />
               <Bar dataKey="budgeted" fill="var(--color-budgeted)" name="budgeted" />
               <Bar dataKey="spent" fill="var(--color-spent)" name="spent" />

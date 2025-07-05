@@ -9,7 +9,9 @@ export async function GET() {
     const budgets = await db.collection("budgets").find({}).sort({ category: 1 }).toArray()
 
     return NextResponse.json(budgets)
-  } catch (error) {
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  catch {
     return NextResponse.json({ error: "Failed to fetch budgets" }, { status: 500 })
   }
 }
@@ -52,7 +54,9 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 },
     )
-  } catch (error) {
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  catch {
     return NextResponse.json({ error: "Failed to create budget" }, { status: 500 })
   }
 }

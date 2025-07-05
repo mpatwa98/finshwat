@@ -22,23 +22,29 @@ const CATEGORIES = [
   "Other",
 ]
 
+interface Budget {
+  _id?: string
+  category: string
+  amount: number
+}
+
 interface BudgetManagerProps {
-  budgets: any[]
+  budgets: Budget[]
   onUpdate: () => void
 }
 
 export function BudgetManager({ budgets, onUpdate }: BudgetManagerProps) {
   const [showForm, setShowForm] = useState(false)
-  const [editingBudget, setEditingBudget] = useState(null)
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null)
   const [formData, setFormData] = useState({
     category: "",
     amount: "",
   })
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const { toast } = useToast()
 
-  const handleEdit = (budget) => {
+  const handleEdit = (budget: Budget) => {
     setEditingBudget(budget)
     setFormData({
       category: budget.category,
@@ -57,26 +63,26 @@ export function BudgetManager({ budgets, onUpdate }: BudgetManagerProps) {
   }
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors: Record<string, string> = {}
 
     if (!formData.category) {
-      newErrors.category = "Category is required"
+      newErrors["category"] = "Category is required"
     }
 
     if (!formData.amount || Number.parseFloat(formData.amount) <= 0) {
-      newErrors.amount = "Amount must be greater than 0"
+      newErrors["amount"] = "Amount must be greater than 0"
     }
 
     // Check for duplicate category (only when adding new budget)
     if (!editingBudget && budgets.some((b) => b.category === formData.category)) {
-      newErrors.category = "Budget for this category already exists"
+      newErrors["category"] = "Budget for this category already exists"
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!validateForm()) {
@@ -111,10 +117,10 @@ export function BudgetManager({ budgets, onUpdate }: BudgetManagerProps) {
 
       setShowForm(false)
       onUpdate()
-    } catch (error) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       })
     } finally {
@@ -122,7 +128,8 @@ export function BudgetManager({ budgets, onUpdate }: BudgetManagerProps) {
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | undefined) => {
+    if (!id) return
     if (!confirm("Are you sure you want to delete this budget?")) {
       return
     }
@@ -144,10 +151,10 @@ export function BudgetManager({ budgets, onUpdate }: BudgetManagerProps) {
       })
 
       onUpdate()
-    } catch (error) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       })
     } finally {
