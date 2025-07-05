@@ -14,17 +14,29 @@ import { BudgetManager } from "@/components/budget-manager"
 import { SpendingInsights } from "@/components/spending-insights"
 import { useTransactions } from "@/hooks/use-transactions"
 import { useBudgets } from "@/hooks/use-budgets"
+import type { Transaction } from "@/components/transaction-list"
+import type { Budget } from "@/components/budget-manager"
 
 export default function HomePage() {
   const [showTransactionForm, setShowTransactionForm] = useState(false)
-  const [editingTransaction, setEditingTransaction] = useState(null)
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | undefined>(undefined)
   const {
     transactions,
     loading: transactionsLoading,
     error: transactionsError,
     refetch: refetchTransactions,
-  } = useTransactions()
-  const { budgets, loading: budgetsLoading, error: budgetsError, refetch: refetchBudgets } = useBudgets()
+  } = useTransactions() as {
+    transactions: Transaction[];
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+  }
+  const { budgets, loading: budgetsLoading, error: budgetsError, refetch: refetchBudgets } = useBudgets() as {
+    budgets: Budget[];
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+  }
 
   const currentMonth = new Date().toISOString().slice(0, 7)
   const currentMonthTransactions = transactions.filter((t) => t.date.startsWith(currentMonth))
@@ -33,14 +45,14 @@ export default function HomePage() {
   const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0)
   const budgetRemaining = totalBudget - totalExpenses
 
-  const handleEditTransaction = (transaction) => {
+  const handleEditTransaction = (transaction: Transaction) => {
     setEditingTransaction(transaction)
     setShowTransactionForm(true)
   }
 
   const handleFormClose = () => {
     setShowTransactionForm(false)
-    setEditingTransaction(null)
+    setEditingTransaction(undefined)
     refetchTransactions()
   }
 

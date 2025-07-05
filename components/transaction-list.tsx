@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Edit, Trash2, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
-interface Transaction {
+export interface Transaction {
   _id: string
   amount: number
   date: string

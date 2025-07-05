@@ -22,7 +22,7 @@ const CATEGORIES = [
   "Other",
 ]
 
-interface Budget {
+export interface Budget {
   _id?: string
   category: string
   amount: number
