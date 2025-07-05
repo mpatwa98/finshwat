@@ -93,7 +93,7 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
       type: "danger",
       icon: AlertTriangle,
       title: "Over budget",
-      description: `You're over budget in ${overBudgetCategories.length} ${overBudgetCategories.length === 1 ? "category" : "categories"}: ${overBudgetCategories.map((c) => c.category).join(", ")}.`,
+      description: `You&apos;re over budget in ${overBudgetCategories.length} ${overBudgetCategories.length === 1 ? "category" : "categories"}: ${overBudgetCategories.map((c) => c.category).join(", ")}.`,
     })
   }
 
@@ -122,7 +122,7 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
       type: "warning",
       icon: TrendingUp,
       title: "Projected overspending",
-      description: `Based on your current spending pattern, you're projected to spend $${projectedMonthlySpending.toFixed(2)} this month.`,
+      description: `Based on your current spending pattern, you&apos;re projected to spend $${projectedMonthlySpending.toFixed(2)} this month.`,
     })
   }
 
@@ -133,7 +133,7 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
       type: "positive",
       icon: CheckCircle,
       title: "Good budget management",
-      description: `You're staying within budget in ${goodBudgetCategories.length} ${goodBudgetCategories.length === 1 ? "category" : "categories"}. Keep it up!`,
+      description: `You&apos;re staying within budget in ${goodBudgetCategories.length} ${goodBudgetCategories.length === 1 ? "category" : "categories"}. Keep it up!`,
     })
   }
 
