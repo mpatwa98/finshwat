@@ -4,13 +4,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts"
 
+interface Transaction {
+  _id?: string
+  amount: number
+  date: string
+  description: string
+  category: string
+}
+
 interface MonthlyExpensesChartProps {
-  transactions: any[]
+  transactions: Transaction[]
+}
+
+// Helper type for monthly data
+interface MonthlyData {
+  [month: string]: { month: string; amount: number }
 }
 
 export function MonthlyExpensesChart({ transactions }: MonthlyExpensesChartProps) {
   // Group transactions by month
-  const monthlyData = transactions.reduce((acc, transaction) => {
+  const monthlyData: MonthlyData = transactions.reduce((acc, transaction) => {
     const month = transaction.date.slice(0, 7) // YYYY-MM format
     const monthName = new Date(transaction.date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -26,7 +39,7 @@ export function MonthlyExpensesChart({ transactions }: MonthlyExpensesChartProps
 
     acc[month].amount += transaction.amount
     return acc
-  }, {})
+  }, {} as MonthlyData)
 
   const chartData = Object.values(monthlyData)
     .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
@@ -53,7 +66,7 @@ export function MonthlyExpensesChart({ transactions }: MonthlyExpensesChartProps
               <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
               <ChartTooltip
                 content={<ChartTooltipContent />}
-                formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]}
+                formatter={(value: number | string) => [`$${Number(value).toFixed(2)}`, "Amount"]}
               />
               <Bar dataKey="amount" fill="var(--color-amount)" radius={[4, 4, 0, 0]} />
             </BarChart>

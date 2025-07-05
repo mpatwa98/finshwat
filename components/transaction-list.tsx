@@ -9,9 +9,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Edit, Trash2, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
+interface Transaction {
+  _id: string
+  amount: number
+  date: string
+  description: string
+  category: string
+}
+
 interface TransactionListProps {
-  transactions: any[]
-  onEdit: (transaction: any) => void
+  transactions: Transaction[]
+  onEdit: (transaction: Transaction) => void
   onDelete: () => void
   showActions?: boolean
 }
@@ -54,10 +62,10 @@ export function TransactionList({ transactions, onEdit, onDelete, showActions = 
       })
 
       onDelete()
-    } catch (error) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       })
     } finally {
@@ -66,7 +74,7 @@ export function TransactionList({ transactions, onEdit, onDelete, showActions = 
   }
 
   const getCategoryColor = (category: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       "Food & Dining": "bg-red-100 text-red-800",
       Transportation: "bg-blue-100 text-blue-800",
       Shopping: "bg-green-100 text-green-800",

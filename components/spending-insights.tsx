@@ -4,9 +4,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle } from "lucide-react"
 
+interface Transaction {
+  _id?: string;
+  amount: number;
+  date: string;
+  description: string;
+  category: string;
+}
+
+interface Budget {
+  _id?: string;
+  category: string;
+  amount: number;
+}
+
 interface SpendingInsightsProps {
-  transactions: any[]
-  budgets: any[]
+  transactions: Transaction[];
+  budgets: Budget[];
+}
+
+// Helper type for category spending
+interface CategorySpending {
+  [category: string]: number;
 }
 
 export function SpendingInsights({ transactions, budgets }: SpendingInsightsProps) {
@@ -23,18 +42,18 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
   const monthlyChangePercent = lastMonthTotal > 0 ? (monthlyChange / lastMonthTotal) * 100 : 0
 
   // Category analysis
-  const categorySpending = currentMonthTransactions.reduce((acc, t) => {
-    acc[t.category] = (acc[t.category] || 0) + t.amount
-    return acc
-  }, {})
+  const categorySpending: CategorySpending = currentMonthTransactions.reduce((acc, t) => {
+    acc[t.category] = (acc[t.category] || 0) + t.amount;
+    return acc;
+  }, {} as CategorySpending);
 
   const topCategories = Object.entries(categorySpending)
-    .sort(([, a], [, b]) => b - a)
+    .sort(([, a], [, b]) => (b as number) - (a as number))
     .slice(0, 3)
 
   // Budget analysis
   const budgetAnalysis = budgets.map((budget) => {
-    const spent = categorySpending[budget.category] || 0
+    const spent = categorySpending[budget.category] || 0;
     const remaining = budget.amount - spent
     const percentUsed = (spent / budget.amount) * 100
 
@@ -93,8 +112,8 @@ export function SpendingInsights({ transactions, budgets }: SpendingInsightsProp
       type: "info",
       icon: TrendingUp,
       title: "Top spending categories",
-      description: `Your highest expenses this month: ${topCategories.map(([cat, amount]) => `${cat} ($${amount.toFixed(2)})`).join(", ")}.`,
-    })
+      description: `Your highest expenses this month: ${topCategories.map(([cat, amount]) => `${cat} ($${(amount as number).toFixed(2)})`).join(", ")}.`,
+    });
   }
 
   // Projected spending

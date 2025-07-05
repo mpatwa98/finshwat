@@ -4,19 +4,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 
+interface Transaction {
+  _id?: string;
+  amount: number;
+  date: string;
+  description: string;
+  category: string;
+}
+
 interface CategoryPieChartProps {
-  transactions: any[]
+  transactions: Transaction[];
+}
+
+// Helper type for category data
+interface CategoryData {
+  [category: string]: number;
 }
 
 export function CategoryPieChart({ transactions }: CategoryPieChartProps) {
   // Group transactions by category
-  const categoryData = transactions.reduce((acc, transaction) => {
+  const categoryData: CategoryData = transactions.reduce((acc, transaction) => {
     if (!acc[transaction.category]) {
-      acc[transaction.category] = 0
+      acc[transaction.category] = 0;
     }
-    acc[transaction.category] += transaction.amount
-    return acc
-  }, {})
+    acc[transaction.category] += transaction.amount;
+    return acc;
+  }, {} as CategoryData)
 
   const chartData = Object.entries(categoryData).map(([category, amount]) => ({
     category,
@@ -40,9 +53,9 @@ export function CategoryPieChart({ transactions }: CategoryPieChartProps) {
     config[item.category] = {
       label: item.category,
       color: COLORS[index % COLORS.length],
-    }
-    return config
-  }, {})
+    };
+    return config;
+  }, {} as Record<string, { label: string; color: string }>)
 
   if (chartData.length === 0) {
     return (
@@ -84,7 +97,7 @@ export function CategoryPieChart({ transactions }: CategoryPieChartProps) {
               </Pie>
               <ChartTooltip
                 content={<ChartTooltipContent />}
-                formatter={(value) => [`$${value.toFixed(2)}`, "Amount"]}
+                formatter={(value: number|string) => [`$${Number(value).toFixed(2)}`, "Amount"]}
               />
             </PieChart>
           </ResponsiveContainer>

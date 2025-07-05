@@ -21,75 +21,91 @@ const CATEGORIES = [
   "Other",
 ]
 
+interface Transaction {
+  _id?: string
+  amount: number
+  date: string
+  description: string
+  category: string
+}
+
 interface TransactionFormProps {
-  transaction?: any
+  transaction?: Transaction
   onClose: () => void
 }
 
+interface TransactionFormErrors {
+  amount?: string;
+  date?: string;
+  description?: string;
+  category?: string;
+}
+
 export function TransactionForm({ transaction, onClose }: TransactionFormProps) {
-  const [formData, setFormData] = useState({
-    amount: "",
+  const [formData, setFormData] = useState<Transaction>({
+    amount: "" as unknown as number,
     date: "",
     description: "",
     category: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({})
-  const { toast } = useToast()
+  });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<TransactionFormErrors>({});
+  const { toast } = useToast();
 
   useEffect(() => {
     if (transaction) {
       setFormData({
-        amount: transaction.amount.toString(),
+        amount: transaction.amount,
         date: transaction.date,
         description: transaction.description,
         category: transaction.category,
-      })
+        _id: transaction._id,
+      });
     } else {
       setFormData({
-        amount: "",
+        amount: "" as unknown as number,
         date: new Date().toISOString().split("T")[0],
         description: "",
         category: "",
-      })
+      });
     }
-  }, [transaction])
+  }, [transaction]);
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors: TransactionFormErrors = {};
 
-    if (!formData.amount || Number.parseFloat(formData.amount) <= 0) {
-      newErrors.amount = "Amount must be greater than 0"
+    if (!formData.amount || Number(formData.amount) <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
     }
 
     if (!formData.date) {
-      newErrors.date = "Date is required"
+      newErrors.date = "Date is required";
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = "Description is required"
+      newErrors.description = "Description is required";
     }
 
     if (!formData.category) {
-      newErrors.category = "Category is required"
+      newErrors.category = "Category is required";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const url = transaction ? `/api/transactions/${transaction._id}` : "/api/transactions"
-      const method = transaction ? "PUT" : "POST"
+      const url = transaction ? `/api/transactions/${transaction._id}` : "/api/transactions";
+      const method = transaction ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -98,28 +114,28 @@ export function TransactionForm({ transaction, onClose }: TransactionFormProps) 
         },
         body: JSON.stringify({
           ...formData,
-          amount: Number.parseFloat(formData.amount),
+          amount: Number(formData.amount),
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to save transaction")
+        throw new Error("Failed to save transaction");
       }
 
       toast({
         title: "Success",
         description: `Transaction ${transaction ? "updated" : "created"} successfully`,
-      })
+      });
 
-      onClose()
-    } catch (error) {
+      onClose();
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -139,7 +155,7 @@ export function TransactionForm({ transaction, onClose }: TransactionFormProps) 
               step="0.01"
               placeholder="0.00"
               value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, amount: Number(e.target.value) })}
               className={errors.amount ? "border-red-500" : ""}
             />
             {errors.amount && <p className="text-sm text-red-500">{errors.amount}</p>}
@@ -151,7 +167,7 @@ export function TransactionForm({ transaction, onClose }: TransactionFormProps) 
               id="date"
               type="date"
               value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, date: e.target.value })}
               className={errors.date ? "border-red-500" : ""}
             />
             {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
@@ -180,7 +196,7 @@ export function TransactionForm({ transaction, onClose }: TransactionFormProps) 
               id="description"
               placeholder="Enter transaction description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
               className={errors.description ? "border-red-500" : ""}
             />
             {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
